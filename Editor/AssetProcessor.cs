@@ -35,7 +35,8 @@ namespace Ogxd.ProjectCurator
             if (ProjectCuratorData.IsUpToDate) {
                 _actions.Enqueue(() => {
                     foreach (string path in paths) {
-                        var guid = AssetDatabase.GUIDFromAssetPath(path);
+	                    // TrimEnd: See OnWillCreateAsset() in this file for explanation.
+                        var guid = AssetDatabase.GUIDFromAssetPath(path.TrimEnd(".meta"));
                         var removedAsset = ProjectCurator.RemoveAssetFromDatabase(guid);
                         ProjectCurator.AddAssetToDatabase(guid, removedAsset?.referencers);
                     }
@@ -52,6 +53,7 @@ namespace Ogxd.ProjectCurator
             //
             // .meta files are not assets, so there are no other cases where
             // this will have any effect.
+            // See also: OnWillSaveAssets().
             assetPath = assetPath.TrimEnd(".meta");
 
             if (ProjectCuratorData.IsUpToDate) {
