@@ -1,31 +1,16 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
 
 namespace Ogxd.ProjectCurator
 {
-    class GuidConverter : JsonConverter<GUID>
-    {
-        public override GUID ReadJson(JsonReader reader, Type objectType, GUID existingValue, bool hasExistingValue, JsonSerializer serializer)
-        {
-            GUID.TryParse(reader.Value as string, out var result);
-            return result;
-        }
-
-        public override void WriteJson(JsonWriter writer, GUID value, JsonSerializer serializer)
-        {
-            writer.WriteValue(value.ToString());
-        }
-    }
-
-    [JsonObject(MemberSerialization.OptIn)]
+    [Serializable]
     public class ProjectCuratorData
     {
         private const string JSON_PATH = "UserSettings/ProjectCuratorData.json";
 
-        [JsonProperty]
+        [SerializeField]
         bool isUpToDate = false;
 
         public static bool IsUpToDate {
@@ -33,7 +18,7 @@ namespace Ogxd.ProjectCurator
             set => Instance.isUpToDate = value;
         }
 
-        [JsonProperty]
+        [SerializeField]
         AssetInfo[] _assetInfos;
 
         public static AssetInfo[] AssetInfos {
@@ -47,7 +32,8 @@ namespace Ogxd.ProjectCurator
                 if (instance == null) {
                     if (File.Exists(JSON_PATH)) {
                         var json = File.ReadAllText(JSON_PATH);
-                        instance = JsonConvert.DeserializeObject<ProjectCuratorData>(json, GuidConverter);
+                        instance = new ProjectCuratorData();
+                        EditorJsonUtility.FromJsonOverwrite(json, instance);
                     } else {
                         instance = new ProjectCuratorData();
                     }
@@ -56,10 +42,9 @@ namespace Ogxd.ProjectCurator
             }
         }
 
-        private static readonly GuidConverter GuidConverter = new();
         public static void Save()
         {
-            var json = JsonConvert.SerializeObject(Instance, GuidConverter);
+            var json = EditorJsonUtility.ToJson(Instance, false);
             File.WriteAllText(JSON_PATH, json);
         }
     }

@@ -38,7 +38,7 @@ namespace Ogxd.ProjectCurator
 	                    // TrimEnd: See OnWillCreateAsset() in this file for explanation.
                         var guid = AssetDatabase.GUIDFromAssetPath(path.TrimEnd(".meta"));
                         var removedAsset = ProjectCurator.RemoveAssetFromDatabase(guid);
-                        ProjectCurator.AddAssetToDatabase(guid, removedAsset?.referencers);
+                        ProjectCurator.AddAssetToDatabase(guid, removedAsset?.Referencers);
                     }
                 });
             }

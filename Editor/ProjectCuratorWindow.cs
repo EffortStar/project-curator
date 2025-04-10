@@ -96,18 +96,18 @@ namespace Ogxd.ProjectCurator
 
             scroll = GUILayout.BeginScrollView(scroll);
 
-            dependenciesOpen = EditorGUILayout.Foldout(dependenciesOpen, $"Dependencies ({selectedAssetInfo.dependencies.Count})");
+            dependenciesOpen = EditorGUILayout.Foldout(dependenciesOpen, $"Dependencies ({selectedAssetInfo.Dependencies.Count})");
             if (dependenciesOpen) {
-                foreach (var dependency in selectedAssetInfo.dependencies) {
+                foreach (var dependency in selectedAssetInfo.Dependencies) {
                     RenderOtherAsset(dependency);
                 }
             }
 
             GUILayout.Space(6);
 
-            referencesOpen = EditorGUILayout.Foldout(referencesOpen, $"Referencers ({selectedAssetInfo.referencers.Count})");
+            referencesOpen = EditorGUILayout.Foldout(referencesOpen, $"Referencers ({selectedAssetInfo.Referencers.Count})");
             if (referencesOpen) {
-                foreach (var referencer in selectedAssetInfo.referencers) {
+                foreach (var referencer in selectedAssetInfo.Referencers) {
                     RenderOtherAsset(referencer);
                 }
             }

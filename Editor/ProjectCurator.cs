@@ -18,7 +18,7 @@ namespace Ogxd.ProjectCurator
             try {
                 var assetInfos = ProjectCuratorData.AssetInfos;
                 for (int i = 0; i < assetInfos.Length; i++) {
-                    guidToAssetInfo.Add(assetInfos[i].guid, assetInfos[i]);
+                    guidToAssetInfo.Add(assetInfos[i].Guid, assetInfos[i]);
                 }
             } catch (Exception e) {
                 Debug.LogError($"An error occurred while loading ProjectCurator database: {e}");
@@ -45,18 +45,18 @@ namespace Ogxd.ProjectCurator
             foreach (string dependencyPath in dependencyPaths) {
                 var dependencyGuid = AssetDatabase.GUIDFromAssetPath(dependencyPath);
                 if (
-                    dependencyGuid != assetInfo.guid &&
+                    dependencyGuid != assetInfo.Guid &&
                     guidToAssetInfo.TryGetValue(dependencyGuid, out AssetInfo depInfo)
                 ) {
-                    assetInfo.dependencies.Add(dependencyGuid);
-                    depInfo.referencers.Add(assetInfo.guid);
+                    assetInfo.Dependencies.Add(dependencyGuid);
+                    depInfo.Referencers.Add(assetInfo.Guid);
                     // Included status may have changed and need to be recomputed
                     depInfo.ClearIncludedStatus();
                 }
             }
 
             if (referencers != null)
-                assetInfo.referencers = referencers;
+                assetInfo.Referencers = referencers;
 
             return assetInfo;
         }
@@ -68,9 +68,9 @@ namespace Ogxd.ProjectCurator
             if (guidToAssetInfo.TryGetValue(guid, out AssetInfo assetInfo)) {
 	            // Go through everything known to reference this asset,
 	            // and remove it as a dependency.
-                foreach (GUID referencer in assetInfo.referencers) {
+                foreach (GUID referencer in assetInfo.Referencers) {
                     if (guidToAssetInfo.TryGetValue(referencer, out AssetInfo referencerAssetInfo)) {
-                        if (referencerAssetInfo.dependencies.Remove(guid)) {
+                        if (referencerAssetInfo.Dependencies.Remove(guid)) {
                             referencerAssetInfo.ClearIncludedStatus();
                         } else {
                             // Non-Reciprocity Error
@@ -84,9 +84,9 @@ namespace Ogxd.ProjectCurator
                 }
                 // Go through everything known to be referenced by this asset,
                 // and remove this asset as a referencer.
-                foreach (GUID dependency in assetInfo.dependencies) {
+                foreach (GUID dependency in assetInfo.Dependencies) {
                     if (guidToAssetInfo.TryGetValue(dependency, out AssetInfo dependencyAssetInfo)) {
-                        if (dependencyAssetInfo.referencers.Remove(guid)) {
+                        if (dependencyAssetInfo.Referencers.Remove(guid)) {
                             dependencyAssetInfo.ClearIncludedStatus();
                         } else {
                             // Non-Reciprocity Error
@@ -130,7 +130,7 @@ namespace Ogxd.ProjectCurator
                 string path = allAssetPaths[p];
                 GUID guid = AssetDatabase.GUIDFromAssetPath(path);
                 AssetInfo assetInfo = new AssetInfo(guid);
-                guidToAssetInfo.Add(assetInfo.guid, assetInfo);
+                guidToAssetInfo.Add(assetInfo.Guid, assetInfo);
             }
 
             // Find links between assets
