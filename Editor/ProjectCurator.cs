@@ -187,5 +187,44 @@ namespace Ogxd.ProjectCurator
                 throw new ArgumentException("GUID is empty", nameof(guid));
             }
         }
+
+        public static void SelectReferencers()
+        {
+	        if (!TryGetSelectedAsset(out AssetInfo selectedAssetInfo)) return;
+	        Selection.objects = selectedAssetInfo.Referencers
+		        .Select(g => AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(AssetDatabase.GUIDToAssetPath(g)))
+		        .ToArray();
+        }
+
+        public static void SelectDependencies()
+        {
+	        if (!TryGetSelectedAsset(out AssetInfo selectedAssetInfo)) return;
+	        Selection.objects = selectedAssetInfo.Dependencies
+		        .Select(g => AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(AssetDatabase.GUIDToAssetPath(g)))
+		        .ToArray();
+        }
+
+        private static bool TryGetSelectedAsset(out AssetInfo selectedAssetInfo)
+        {
+	        string selectedPath = AssetDatabase.GetAssetPath(Selection.activeObject);
+	        if (string.IsNullOrEmpty(selectedPath))
+	        {
+		        selectedAssetInfo = null;
+		        return false;
+	        }
+	        GUID guid = AssetDatabase.GUIDFromAssetPath(selectedPath);
+	        if (Directory.Exists(selectedPath))
+	        {
+		        selectedAssetInfo = null;
+		        return false;
+	        }
+	        selectedAssetInfo = GetAsset(guid);
+	        if (selectedAssetInfo == null)
+	        {
+		        return false;
+	        }
+
+	        return true;
+        }
     }
 }

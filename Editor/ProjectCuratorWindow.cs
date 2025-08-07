@@ -63,7 +63,7 @@ namespace Ogxd.ProjectCurator
             GUILayout.BeginVertical();
             GUILayout.Label(Path.GetFileName(selectedPath), TitleStyle);
             // Display directory (without "Assets/" prefix)
-            GUILayout.Label(Regex.Match(Path.GetDirectoryName(selectedPath), "(\\\\.*)$").Value);
+            GUILayout.Label(Regex.Match(Path.GetDirectoryName(selectedPath), @"(\\.*)$").Value);
             rect = GUILayoutUtility.GetLastRect();
             GUILayout.EndVertical();
             GUILayout.Space(44);
@@ -143,6 +143,8 @@ namespace Ogxd.ProjectCurator
         {
             menu.AddItem(new GUIContent("Rebuild Database"), false, ProjectCurator.RebuildDatabase);
             menu.AddItem(new GUIContent("Clear Database"), false, ProjectCurator.ClearDatabase);
+            menu.AddItem(new GUIContent("Select All/Referencers"), false, ProjectCurator.SelectReferencers);
+            menu.AddItem(new GUIContent("Select All/Dependencies"), false, ProjectCurator.SelectDependencies);
             menu.AddItem(new GUIContent("Project Overlay"), ProjectWindowOverlay.Enabled, () => { ProjectWindowOverlay.Enabled = !ProjectWindowOverlay.Enabled; });
         }
 
