@@ -37,7 +37,8 @@ namespace Ogxd.ProjectCurator
 
         private void OnGUI()
         {
-	        if (EditorApplication.isCompiling)
+	        // NOTE: Compilation can be triggered from playmode but actually nothing is happening...
+	        if (EditorApplication.isCompiling && !Application.isPlaying)
 	        {
 		        EditorGUILayout.HelpBox("Currently recompiling..", MessageType.Info);
 		        return;
